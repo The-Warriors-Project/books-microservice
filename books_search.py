@@ -1,5 +1,5 @@
 from fastapi import APIRouter, status, Query
-from books_db_util import get_by_book_name, get_by_book_author
+from db_books_util import get_by_book_name, get_by_book_author
 import consts
 
 books_search_router = APIRouter(prefix="/api/v1")
