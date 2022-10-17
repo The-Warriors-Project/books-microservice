@@ -1,6 +1,7 @@
-from fastapi import APIRouter, status, Query
-from db_books_util import get_by_book_name, get_by_book_author
+from fastapi import APIRouter, status
+
 import consts
+from db_books_util import get_by_book_field
 
 books_search_router = APIRouter(prefix="/api/v1")
 
@@ -14,7 +15,7 @@ def get_book_by_name(book_name: str):
     :param book_name: the book name
     :return: book's information
     """
-    result = get_by_book_name(book_name=book_name, field=consts.NAME)
+    result = get_by_book_field(field_data=book_name, field_name=consts.NAME)
 
     return result
 
@@ -28,6 +29,6 @@ def get_book_by_author(author_name: str):
     :param author_name: the author name
     :return: book's information
     """
-    result = get_by_book_author(author_name=author_name, field=consts.AUTHOR)
+    result = get_by_book_field(field_data=author_name, field_name=consts.AUTHOR)
 
     return result

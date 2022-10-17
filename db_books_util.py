@@ -1,7 +1,7 @@
 from typing import Optional
-from db_books_system import DbBooksSystem
-import consts
 
+import consts
+from db_books_system import DbBooksSystem
 
 DB_CONNECTION = DbBooksSystem.get_connection()
 
@@ -21,37 +21,19 @@ def get_data(sql: str, argument: Optional[str] = None):
     return final_result
 
 
-def get_by_book_name(book_name: str, field: str, filters: Optional[dict] = None) -> [dict]:
+def get_by_book_field(field_name_: str, field_data_: str) -> [dict]:
     """
     This function retrieves data from the DB
-    :param book_name: the name of the book
-    :param field: the needed field for the query (etc. name)
-    :param filters: optional filters for query
+    :param field_name_: the name of the field in the database
+    :param field_data_: the field data
     :return: a list of books
     """
 
-    sql = "SELECT {filter_} FROM {db_name}.{table_name} WHERE {field}=%s".format(filter_='*',
-                                                                                 db_name=consts.DATABASE_NAME,
-                                                                                 table_name=consts.TABLE_NAME,
-                                                                                 field=field)
+    sql = "SELECT {filter} FROM {db_name}.{table_name} " \
+          "WHERE {field_name}=%s".format(filter='*',
+                                         db_name=consts.DATABASE_NAME,
+                                         table_name=consts.TABLE_NAME,
+                                         field_name=field_name_)
 
-    final_result = get_data(sql=sql, argument=book_name)
-    return final_result
-
-
-def get_by_book_author(author_name: str, field: str, filters: Optional[dict] = None) -> [dict]:
-    """
-    This function retrieves data from the DB.
-    :param author_name: the author of the book
-    :param field: the needed field for the query (etc. author)
-    :param filters: optional filters for query
-    :return: a list of books
-    """
-
-    sql = "SELECT {filter_} FROM {db_name}.{table_name} WHERE {field}=%s".format(filter_='*',
-                                                                                 db_name=consts.DATABASE_NAME,
-                                                                                 table_name=consts.TABLE_NAME,
-                                                                                 field=field)
-
-    final_result = get_data(sql=sql, argument=author_name)
+    final_result = get_data(sql=sql, argument=field_data_)
     return final_result

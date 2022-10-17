@@ -1,5 +1,4 @@
 import pymysql
-from typing import Optional
 
 
 # TODO: changing the connection to the AWS
