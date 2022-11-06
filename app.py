@@ -3,7 +3,7 @@ from datetime import datetime
 
 from fastapi import FastAPI, Response, status
 
-from books_search import books_search_router
+from endpoints import books_search_router
 
 app = FastAPI()
 

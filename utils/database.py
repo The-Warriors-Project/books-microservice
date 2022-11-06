@@ -7,7 +7,7 @@ class DbBooksSystem:
     @staticmethod
     def get_connection():
         user = "root"  # "admin"
-        password =  "dbuserdbuser" #"the_warriors"
+        password = "dbuserdbuser" #"the_warriors"
         host = "localhost"  #"books.ci6gsofoisc0.us-east-1.rds.amazonaws.com"
 
         connection = pymysql.connect(user=user,
@@ -16,3 +16,6 @@ class DbBooksSystem:
                                      cursorclass=pymysql.cursors.DictCursor,
                                      autocommit=True)
         return connection
+
+
+DB_CONNECTION = DbBooksSystem.get_connection()
