@@ -1,5 +1,5 @@
 # DB configuration
-DATABASE_NAME = "books_testing"   # "books_system"
+DATABASE_NAME = "books_db"   # "books_system"
 TABLE_NAME = "books"
 
 # DB fields

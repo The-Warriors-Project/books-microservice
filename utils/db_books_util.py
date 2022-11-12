@@ -58,7 +58,7 @@ def insert_book(name: str, author: str, description: str, isbn: str, picture: st
     :return: a list of books
     """
 
-    sql = "INSERT INTO `books_testing`.books (name, author, description, isbn, picture) VALUES (%s,%s,%s,%s,%s)"
+    sql = "INSERT INTO `books_db`.books (name, author, description, isbn, picture) VALUES (%s,%s,%s,%s,%s)"
 
     final_result = execute_query(sql=sql, argument=(name, author, description, isbn, picture))
     return final_result

@@ -1,7 +1,6 @@
 import pymysql
 
 
-# TODO: changing the connection to the AWS
 class DbBooksSystem:
     """ This class is a helper class to connect to the system DB """
     @staticmethod
