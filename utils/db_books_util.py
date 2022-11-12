@@ -38,9 +38,11 @@ def get_book(field_name_: str, field_data_: str) -> [dict]:
 
     if not final_result:
         google_result = get_book_from_google_by_title(data=field_data_, field=field_name_)
-        insert_book(name=google_result[0], author=google_result[1], description=google_result[2],
-                    isbn=google_result[3], picture=google_result[4])
         final_result = execute_query(sql=sql, argument=google_result[0])
+        if not final_result:
+            insert_book(name=google_result[0], author=google_result[1], description=google_result[2],
+                        isbn=google_result[3], picture=google_result[4])
+            final_result = execute_query(sql=sql, argument=google_result[0])
 
     return final_result
 
