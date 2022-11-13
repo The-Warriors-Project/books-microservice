@@ -1,6 +1,7 @@
 import pymysql
 import os
 
+
 class DbBooksSystem:
     """ This class is a helper class to connect to the system DB """
     @staticmethod
