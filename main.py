@@ -7,7 +7,7 @@ from fastapi import FastAPI, Response, status
 from endpoints import books_search_router
 
 
-app = application = FastAPI()
+app = FastAPI()
 
 app.include_router(books_search_router)
 
@@ -24,9 +24,9 @@ def get_health():
 
 
 def start_books_microservice():
-    uvicorn.run(app="main:app",
-                host="0.0.0.0",
-                port=8000)
+    uvicorn.run(app="main:app") #,
+                # host="0.0.0.0",
+                # port=5011)
 
 
 if __name__ == "__main__":
