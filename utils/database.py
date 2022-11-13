@@ -6,8 +6,8 @@ class DbBooksSystem:
     @staticmethod
     def get_connection():
         user = os.environ['DB_USER_NAME']
-        password = "the_warriors"
-        host = "books.c4m5teyjg8v7.us-east-1.rds.amazonaws.com"
+        password = os.environ['DB_PASS']
+        host = os.environ['DB_RDS_HOST']
 
         connection = pymysql.connect(user=user,
                                      password=password,
