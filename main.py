@@ -23,11 +23,11 @@ def get_health():
     return result
 
 
-def start_books_microservice():
-    uvicorn.run(app="main:app") #,
-                # host="0.0.0.0",
-                # port=5011)
-
-
-if __name__ == "__main__":
-    start_books_microservice()
+# def start_books_microservice():
+#     uvicorn.run(app="main:app") #,
+#                 # host="0.0.0.0",
+#                 # port=5011)
+#
+#
+# if __name__ == "__main__":
+#     start_books_microservice()
