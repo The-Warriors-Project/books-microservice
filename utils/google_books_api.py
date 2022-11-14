@@ -21,5 +21,3 @@ def get_book_from_google_by_title(data: str, field: str):
     isbn = format_response.get('industryIdentifiers')[0].get('identifier')
     picture = format_response.get('imageLinks').get('thumbnail')
     return [title, author, description, isbn, picture]
-
-
