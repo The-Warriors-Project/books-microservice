@@ -16,7 +16,8 @@ def execute_query(sql: str, argument: Optional[str] = None):
     """
     connection = check_db_connection()
     if not connection:
-        return Response(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, content="DB service is unavailable")
+        return Response(status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                        content={"status": False, "Detail": "DB service is unavailable"})
     cursor = connection.cursor()
     _ = cursor.execute(sql, args=argument)  # provide the number of results
     final_result = cursor.fetchone()  # provide the actual result (with data)
