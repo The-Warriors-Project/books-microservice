@@ -5,7 +5,7 @@ import uvicorn
 from fastapi import FastAPI, Response, status
 
 from endpoints import books_search_router
-from utils.database import check_db_connection
+from utils.database import DbBooksSystem
 
 app = FastAPI(openapi_url='/openapi.json')
 
@@ -19,17 +19,20 @@ def get_health():
     :return:
     """
     current_time = str(datetime.now())
-    status_code = status.HTTP_503_SERVICE_UNAVAILABLE
-    db_connection = check_db_connection()
-    health = "Not good"
-    if db_connection:
-        db_connection = True
+    connection = DbBooksSystem.get_connection()
+
+    if connection:
+        db_connection_status = True
         status_code = status.HTTP_200_OK
         health = "Good"
+    else:
+        db_connection_status = False
+        status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+        health = "Not good"
 
     msg = {"name": "Books-Microservice",
            "health": health,
-           "DB connection": db_connection,
+           "DB connection": db_connection_status,
            "at time": current_time}
     result = Response(json.dumps(msg), status_code=status_code)
 

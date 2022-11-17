@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import status, Response
 
 import consts
-from utils.database import check_db_connection
+from utils.database import DbBooksSystem
 from utils.google_books_api import get_book_from_google_by_title
 
 
@@ -14,10 +14,10 @@ def execute_query(sql: str, argument: Optional[str] = None):
     :param argument: the needed argument
     :return: data
     """
-    connection = check_db_connection()
+    connection = DbBooksSystem.get_connection()
     if not connection:
         return Response(status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                        content={"status": False, "Detail": "DB service is unavailable"})
+                        content="DB service is unavailable")
     cursor = connection.cursor()
     _ = cursor.execute(sql, args=argument)  # provide the number of results
     final_result = cursor.fetchone()  # provide the actual result (with data)
