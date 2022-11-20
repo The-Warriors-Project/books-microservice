@@ -39,17 +39,15 @@ def get_book(field_name_: str, field_data_: str) -> [dict]:
                                          table_name=consts.TABLE_NAME,
                                          field_name=field_name_)
 
-    final_result = execute_query(sql=sql, argument=field_data_)
-
-    if not final_result:
-        google_result = get_book_from_google_by_title(data=field_data_, field=field_name_)
-        final_result = execute_query(sql=sql, argument=google_result[0])
+    google_result = get_book_from_google_by_title(data=field_data_, field=field_name_)
+    for i in range(5):
+        final_result = execute_query(sql=sql, argument=google_result[i].get('title'))
         if not final_result:
-            insert_book(name=google_result[0], author=google_result[1], description=google_result[2],
-                        isbn=google_result[3], picture=google_result[4])
-            final_result = execute_query(sql=sql, argument=google_result[0])
+            insert_book(name=google_result[i].get('title'), author=google_result[i].get('author'),
+                        description=google_result[i].get('description'),
+                        isbn=google_result[i].get('isbn'), picture=google_result[i].get('picture'))
 
-    return final_result
+    return google_result
 
 
 def insert_book(name: str, author: str, description: str, isbn: str, picture: str) -> [dict]:
