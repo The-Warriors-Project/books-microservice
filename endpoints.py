@@ -25,7 +25,7 @@ def get_book_by_name(book_name: str):
     :param book_name: the book name
     :return: book's information
     """
-    result = db_books_util.get_book(field_data_=book_name, field_name_=consts.NAME)
+    result = db_books_util.get_books(field_data_=book_name, field_name_=consts.NAME)
 
     return result
 
@@ -39,7 +39,7 @@ def get_book_by_author(author_name: str):
     :param author_name: the author name
     :return: book's information
     """
-    result = db_books_util.get_book(field_data_=author_name, field_name_=consts.AUTHOR)
+    result = db_books_util.get_books(field_data_=author_name, field_name_=consts.AUTHOR)
 
     return result
 

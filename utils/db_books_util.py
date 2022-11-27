@@ -4,7 +4,7 @@ from fastapi import status, Response
 
 import consts
 from utils.database import DbBooksSystem
-from utils.google_books_api import get_book_from_google_by_title
+from utils.google_books_api import get_books_from_google_by_title
 
 
 def execute_query(sql: str, argument: Optional[str] = None):
@@ -25,7 +25,7 @@ def execute_query(sql: str, argument: Optional[str] = None):
     return final_result
 
 
-def get_book(field_name_: str, field_data_: str) -> [dict]:
+def get_books(field_name_: str, field_data_: str) -> dict:
     """
     This function retrieves data from the DB, if the book does not exist -> get from google API
     :param field_name_: the name of the field in the database
@@ -39,22 +39,20 @@ def get_book(field_name_: str, field_data_: str) -> [dict]:
                                          table_name=consts.TABLE_NAME,
                                          field_name=field_name_)
 
-    final_result = execute_query(sql=sql, argument=field_data_)
-
-    if not final_result:
-        google_result = get_book_from_google_by_title(data=field_data_, field=field_name_)
-        final_result = execute_query(sql=sql, argument=google_result[0])
-
-        # A book can have a list of author but the DB does not accept type list -> join it.
-        if type(google_result[1]) == list:
-            google_result[1] = ', '.join(google_result[1])
-
+    google_result = get_books_from_google_by_title(data=field_data_, field=field_name_)
+    for i in range(5):
+        final_result = execute_query(sql=sql, argument=google_result[i].get('title'))
         if not final_result:
-            insert_book(name=google_result[0], author=google_result[1], description=google_result[2],
-                        isbn=google_result[3], picture=google_result[4])
-            final_result = execute_query(sql=sql, argument=google_result[0])
 
-    return final_result
+            # A book can have a list of author but the DB does not accept type list -> join it.
+            if type(google_result[i].get("author")) == list:
+                google_result[i]["author"] = ', '.join(google_result[i].get("author"))
+
+            insert_book(name=google_result[i].get('title'), author=google_result[i].get('author'),
+                        description=google_result[i].get('description'),
+                        isbn=google_result[i].get('isbn'), picture=google_result[i].get('picture'))
+
+    return google_result
 
 
 def insert_book(name: str, author: str, description: str, isbn: str, picture: str) -> [dict]:
