@@ -2,12 +2,12 @@ import requests
 import consts
 
 
-def get_book_from_google_by_title(data: str, field: str):
+def get_books_from_google_by_title(data: str, field: str) -> dict:
     """
     This function retrieve data from google API
     :param data: the data to retrieve
     :param field: the topic to retrieve
-    :return:
+    :return: the books
     """
     if field == consts.NAME:
         response = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=intitle+{data}")

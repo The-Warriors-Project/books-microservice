@@ -4,7 +4,7 @@ from fastapi import status, Response
 
 import consts
 from utils.database import DbBooksSystem
-from utils.google_books_api import get_book_from_google_by_title
+from utils.google_books_api import get_books_from_google_by_title
 
 
 def execute_query(sql: str, argument: Optional[str] = None):
@@ -25,7 +25,7 @@ def execute_query(sql: str, argument: Optional[str] = None):
     return final_result
 
 
-def get_book(field_name_: str, field_data_: str) -> [dict]:
+def get_books(field_name_: str, field_data_: str) -> dict:
     """
     This function retrieves data from the DB, if the book does not exist -> get from google API
     :param field_name_: the name of the field in the database
@@ -39,10 +39,15 @@ def get_book(field_name_: str, field_data_: str) -> [dict]:
                                          table_name=consts.TABLE_NAME,
                                          field_name=field_name_)
 
-    google_result = get_book_from_google_by_title(data=field_data_, field=field_name_)
+    google_result = get_books_from_google_by_title(data=field_data_, field=field_name_)
     for i in range(5):
         final_result = execute_query(sql=sql, argument=google_result[i].get('title'))
         if not final_result:
+
+            # A book can have a list of author but the DB does not accept type list -> strip it.
+            if type(google_result[i].get("author")) == list:
+                google_result[i]["author"] = ', '.join(google_result[i].get("author"))
+
             insert_book(name=google_result[i].get('title'), author=google_result[i].get('author'),
                         description=google_result[i].get('description'),
                         isbn=google_result[i].get('isbn'), picture=google_result[i].get('picture'))
