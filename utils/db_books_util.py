@@ -45,7 +45,7 @@ def get_book(field_name_: str, field_data_: str) -> [dict]:
         google_result = get_book_from_google_by_title(data=field_data_, field=field_name_)
         final_result = execute_query(sql=sql, argument=google_result[0])
 
-        # A book can have a list of author but the DB does not accept type list -> strip it.
+        # A book can have a list of author but the DB does not accept type list -> join it.
         if type(google_result[1]) == list:
             google_result[1] = ', '.join(google_result[1])
 
