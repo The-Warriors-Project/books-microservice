@@ -73,11 +73,15 @@ def update_likes_count(likes_count: LikesCount) -> None:
     """
 
     book_list = likes_count.book_ids.split(' ')  # split the list
-
+    keep_track = []
     try:
-        for id in book_list:
-            db_books_util.update_likes_book(book_id=id, operator=likes_count.offset)
+        for _id in book_list:
+            keep_track.append(_id)
+            db_books_util.update_likes_book(book_id=_id, operator=likes_count.offset)
     except Exception:
+        # revert
+        for _id in keep_track:
+            db_books_util.update_likes_book(book_id=_id, operator=likes_count.offset*-1)
         return Response(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
