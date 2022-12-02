@@ -66,7 +66,38 @@ def insert_book(name: str, author: str, description: str, isbn: str, picture: st
     :return: a list of books
     """
 
-    sql = "INSERT INTO `books_db`.books (name, author, description, isbn, picture) VALUES (%s,%s,%s,%s,%s)"
+    sql = "INSERT INTO `books_db`.books (name, author, description, isbn, picture, likes_count) VALUES (%s,%s,%s,%s,%s,%s)"
 
-    final_result = execute_query(sql=sql, argument=(name, author, description, isbn, picture))
+    final_result = execute_query(sql=sql, argument=(name, author, description, isbn, picture, 0))
     return final_result
+
+
+def get_likes_book(book_id: str):
+    """
+    This function get a book's count_like using its id
+    :param book_id: the book _id
+    :return: the count likes of a book
+    """
+    sql = "SELECT {filter} FROM {db_name}.{table_name} " \
+          "WHERE {field_name}=%s".format(filter='likes_count',
+                                         db_name=consts.DATABASE_NAME,
+                                         table_name=consts.TABLE_NAME,
+                                         field_name=consts.BOOK_ID)
+    final_result = execute_query(sql=sql, argument=book_id)
+    return final_result
+
+
+def update_likes_book(book_id: str, operator: int):
+    """
+    This function updates the like count accorsing to the request (+1/-1)
+    :param book_id: the book id
+    :param operator: +1/-1
+    :return: None
+    """
+    sql = "UPDATE {db_name}.{table_name} " \
+          "SET likes_count = likes_count+({operator}) WHERE " \
+          "_id={_id} AND likes_count > 0".format(db_name=consts.DATABASE_NAME,
+                                                 table_name=consts.TABLE_NAME,
+                                                 operator=str(operator),
+                                                 _id=book_id)
+    execute_query(sql=sql)
