@@ -1,5 +1,6 @@
 name: GitHub Actions
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+run-name: ${{ github.event.pull_request.base.ref == 'main' }} 🚀
+
 on: [push]
 jobs:
   Explore-GitHub-Actions:
