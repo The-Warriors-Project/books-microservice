@@ -1,5 +1,5 @@
 name: GitHub Actions
-run-name: ${GITHUB_REF#refs/heads/} 🚀
+run-name: ${{ github.ref.heads }} 🚀
 
 on: [push]
 jobs:
