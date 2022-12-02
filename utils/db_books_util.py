@@ -39,6 +39,13 @@ def get_books(field_name_: str, field_data_: str) -> dict:
                                          table_name=consts.TABLE_NAME,
                                          field_name=field_name_)
 
+    sql_fetch_id = "SELECT {filter} FROM {db_name}.{table_name} " \
+                   "WHERE {field_name}=%s".format(filter='_id',
+                                                  db_name=consts.DATABASE_NAME,
+                                                  table_name=consts.TABLE_NAME,
+                                                  field_name=field_name_)
+
+    books_to_return = {}
     google_result = get_books_from_google_by_title(data=field_data_, field=field_name_)
     for i in range(5):
         final_result = execute_query(sql=sql, argument=google_result[i].get('title'))
@@ -52,7 +59,16 @@ def get_books(field_name_: str, field_data_: str) -> dict:
                         description=google_result[i].get('description'),
                         isbn=google_result[i].get('isbn'), picture=google_result[i].get('picture'))
 
-    return google_result
+        # get the _id number
+        _id = execute_query(sql=sql_fetch_id, argument=google_result[i].get('title'))
+        books_to_return[i] = {'title': google_result[i].get('title'),
+                              'author': google_result[i].get('author'),
+                              'description': google_result[i].get('description'),
+                              'isbn': google_result[i].get('isbn'),
+                              'picture': google_result[i].get('picture'),
+                              '_id': _id.get('_id')}
+
+    return books_to_return
 
 
 def insert_book(name: str, author: str, description: str, isbn: str, picture: str) -> [dict]:
