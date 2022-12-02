@@ -1,5 +1,5 @@
 name: GitHub Actions
-run-name: ${{ github.event.pull_request.base.ref == 'main' }} 🚀
+run-name: ${GITHUB_REF#refs/heads/} 🚀
 
 on: [push]
 jobs:
