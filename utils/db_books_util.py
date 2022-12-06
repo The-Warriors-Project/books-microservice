@@ -34,13 +34,13 @@ def get_books(field_name_: str, field_data_: str) -> dict:
     """
 
     sql = "SELECT {filter} FROM {db_name}.{table_name} " \
-          "WHERE {field_name}=%s".format(filter='*',
+          "WHERE {field_name}=%s AND isbn=%s".format(filter='*',
                                          db_name=consts.DATABASE_NAME,
                                          table_name=consts.TABLE_NAME,
                                          field_name=field_name_)
 
     sql_fetch_id = "SELECT {filter} FROM {db_name}.{table_name} " \
-                   "WHERE {field_name}=%s".format(filter='_id',
+                   "WHERE {field_name}=%s AND isbn=%s".format(filter='_id',
                                                   db_name=consts.DATABASE_NAME,
                                                   table_name=consts.TABLE_NAME,
                                                   field_name=field_name_)
@@ -48,7 +48,7 @@ def get_books(field_name_: str, field_data_: str) -> dict:
     books_to_return = {}
     google_result = get_books_from_google_by_title(data=field_data_, field=field_name_)
     for i in range(5):
-        final_result = execute_query(sql=sql, argument=google_result[i].get('title'))
+        final_result = execute_query(sql=sql, argument=(google_result[i].get('title'), google_result[i].get('isbn')))
         if not final_result:
 
             # A book can have a list of author but the DB does not accept type list -> join it.
@@ -60,7 +60,7 @@ def get_books(field_name_: str, field_data_: str) -> dict:
                         isbn=google_result[i].get('isbn'), picture=google_result[i].get('picture'))
 
         # get the _id number
-        _id = execute_query(sql=sql_fetch_id, argument=google_result[i].get('title'))
+        _id = execute_query(sql=sql_fetch_id, argument=(google_result[i].get('title'), google_result[i].get('isbn')))
         books_to_return[i] = {'title': google_result[i].get('title'),
                               'author': google_result[i].get('author'),
                               'description': google_result[i].get('description'),
@@ -82,7 +82,47 @@ def insert_book(name: str, author: str, description: str, isbn: str, picture: st
     :return: a list of books
     """
 
-    sql = "INSERT INTO `books_db`.books (name, author, description, isbn, picture) VALUES (%s,%s,%s,%s,%s)"
+    sql = "INSERT INTO `books_db`.books (name, author, description, isbn, picture, likes_count) VALUES (%s,%s,%s,%s,%s,%s)"
 
-    final_result = execute_query(sql=sql, argument=(name, author, description, isbn, picture))
+    final_result = execute_query(sql=sql, argument=(name, author, description, isbn, picture, 0))
     return final_result
+
+
+def get_likes_book(book_id: str):
+    """
+    This function get a book's count_like using its id
+    :param book_id: the book _id
+    :return: the count likes of a book
+    """
+    sql = "SELECT {filter} FROM {db_name}.{table_name} " \
+          "WHERE {field_name}=%s".format(filter='likes_count',
+                                         db_name=consts.DATABASE_NAME,
+                                         table_name=consts.TABLE_NAME,
+                                         field_name=consts.BOOK_ID)
+    final_result = execute_query(sql=sql, argument=book_id)
+    return final_result
+
+
+def update_likes_book(book_id: str, operator: int):
+    """
+    This function updates the like count accorsing to the request (+1/-1)
+    :param book_id: the book id
+    :param operator: +1/-1
+    :return: None
+    """
+
+    if operator > 0:
+        sql = "UPDATE {db_name}.{table_name} " \
+              "SET likes_count = likes_count+({operator}) WHERE " \
+              "_id={_id}".format(db_name=consts.DATABASE_NAME,
+                                 table_name=consts.TABLE_NAME,
+                                 operator=str(operator),
+                                 _id=book_id)
+    else:  # in case of removing like, making sure it cannot be less than 0.
+        sql = "UPDATE {db_name}.{table_name} " \
+              "SET likes_count = likes_count+({operator}) WHERE " \
+              "_id={_id} AND likes_count > 0".format(db_name=consts.DATABASE_NAME,
+                                                     table_name=consts.TABLE_NAME,
+                                                     operator=str(operator),
+                                                     _id=book_id)
+    execute_query(sql=sql)
