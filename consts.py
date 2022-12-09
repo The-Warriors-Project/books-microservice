@@ -3,7 +3,7 @@ DATABASE_NAME = "books_db"
 TABLE_NAME = "books"
 
 # DB fields
-NAME = "name"
+TITLE = "title"
 AUTHOR = "author"
 DESCRIPTION = "description"
 ISBN = "isbn"

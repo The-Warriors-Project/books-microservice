@@ -9,7 +9,7 @@ books_search_router = APIRouter(prefix="/api/v1/book")
 
 
 class Books(BaseModel):
-    name: str
+    title: str
     author: str
     description: str
     isbn: str
@@ -27,10 +27,8 @@ class LikesCount(BaseModel):
 def get_book_by_name(book_name: str):
     """
     This endpoint returns a book by its name
-    :param book_name: the book name
-    :return: book's information
     """
-    result = db_books_util.get_books(field_data_=book_name, field_name_=consts.NAME)
+    result = db_books_util.get_books(field_data_=book_name, field_name_=consts.TITLE)
 
     return result
 
@@ -41,12 +39,28 @@ def get_book_by_name(book_name: str):
 def get_book_by_author(author_name: str):
     """
     This endpoint returns a book by its author
-    :param author_name: the author name
-    :return: book's information
     """
     result = db_books_util.get_books(field_data_=author_name, field_name_=consts.AUTHOR)
 
     return result
+
+
+@books_search_router.get(path="/book_ids/{book_ids}",
+                         status_code=status.HTTP_200_OK,
+                         operation_id="get_book_by_id")
+def get_book_by_id(book_ids: str):
+    """
+    This function get book information from the DB by a book id.
+    A list of books must be in the pattern of '+' seperated. Example: "1+2+3"
+    """
+    books_to_return = {}
+    book_ids_list = book_ids.split('+')  # split the str if there are multiple ids
+    i = 0
+    for _id in book_ids_list:
+        books_to_return[i] = db_books_util.get_book_by_id(_id=_id)
+        i += 1
+
+    return books_to_return
 
 
 @books_search_router.post(path="/book_name/{book_name}/add",
@@ -55,10 +69,8 @@ def get_book_by_author(author_name: str):
 def insert_book(book: Books):
     """
     This endpoint inserts a book with its properties
-    :param book: the book's properties
     """
-
-    db_books_util.insert_book(name=book.name, isbn=book.isbn, author=book.author,
+    db_books_util.insert_book(title=book.title, isbn=book.isbn, author=book.author,
                               picture=book.picture, description=book.description)
 
 
@@ -68,7 +80,6 @@ def insert_book(book: Books):
 def update_likes_count(likes_count: LikesCount) -> dict | Response:
     """
     This endpoint update the like count for each book.
-    :return: None
     """
 
     payload = {}
@@ -96,8 +107,6 @@ def update_likes_count(likes_count: LikesCount) -> dict | Response:
 def get_likes_count(book_id: str) -> dict | Response:
     """
     This endpoint returns the likes count for a book.
-    :param book_id: the needed book id
-    :return: an int representing the likes count
     """
     result = db_books_util.get_likes_book(book_id=book_id)
     # if _id does not exist, return 404 not found status code
