@@ -1,10 +1,9 @@
 from fastapi import APIRouter
-from fastapi import status
+from fastapi import status, Response
 from pydantic import BaseModel
 
 import consts
 from utils import db_books_util
-from fastapi import Response
 
 books_search_router = APIRouter(prefix="/api/v1/book")
 
@@ -66,29 +65,35 @@ def insert_book(book: Books):
 @books_search_router.put(path="/likes_count",
                          status_code=status.HTTP_200_OK,
                          operation_id="update_likes_count")
-def update_likes_count(likes_count: LikesCount) -> None:
+def update_likes_count(likes_count: LikesCount) -> dict | Response:
     """
     This endpoint update the like count for each book.
     :return: None
     """
 
+    payload = {}
     book_list = likes_count.book_ids.split(' ')  # split the list
     keep_track = []
     try:
         for _id in book_list:
             keep_track.append(_id)
             db_books_util.update_likes_book(book_id=_id, operator=likes_count.offset)
+            book_likes_count = db_books_util.get_likes_book(book_id=_id)
+            if book_likes_count:
+                payload[_id] = book_likes_count.get('likes_count')
     except Exception:
         # revert
         for _id in keep_track:
             db_books_util.update_likes_book(book_id=_id, operator=likes_count.offset*-1)
         return Response(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    return {'success': True, 'payload': payload}
+
 
 @books_search_router.get(path="/likes_count/book_id/{book_id}",
                          status_code=status.HTTP_200_OK,
                          operation_id="get_likes_count")
-def get_likes_count(book_id: str) -> int:
+def get_likes_count(book_id: str) -> dict | Response:
     """
     This endpoint returns the likes count for a book.
     :param book_id: the needed book id
@@ -98,4 +103,4 @@ def get_likes_count(book_id: str) -> int:
     # if _id does not exist, return 404 not found status code
     if not result:
         return Response(status_code=status.HTTP_404_NOT_FOUND)
-    return result
+    return {'success': True, 'payload': result}
