@@ -35,15 +35,15 @@ def get_books(field_name_: str, field_data_: str) -> dict:
 
     sql = "SELECT {filter} FROM {db_name}.{table_name} " \
           "WHERE {field_name}=%s AND isbn=%s".format(filter='*',
-                                         db_name=consts.DATABASE_NAME,
-                                         table_name=consts.TABLE_NAME,
-                                         field_name=field_name_)
+                                                     db_name=consts.DATABASE_NAME,
+                                                     table_name=consts.TABLE_NAME,
+                                                     field_name=field_name_)
 
     sql_fetch_id = "SELECT {filter} FROM {db_name}.{table_name} " \
                    "WHERE {field_name}=%s AND isbn=%s".format(filter='_id',
-                                                  db_name=consts.DATABASE_NAME,
-                                                  table_name=consts.TABLE_NAME,
-                                                  field_name=field_name_)
+                                                              db_name=consts.DATABASE_NAME,
+                                                              table_name=consts.TABLE_NAME,
+                                                              field_name=field_name_)
 
     books_to_return = {}
     google_result = get_books_from_google_by_title(data=field_data_, field=field_name_)
@@ -55,7 +55,7 @@ def get_books(field_name_: str, field_data_: str) -> dict:
             if type(google_result[i].get("author")) == list:
                 google_result[i]["author"] = ', '.join(google_result[i].get("author"))
 
-            insert_book(name=google_result[i].get('title'), author=google_result[i].get('author'),
+            insert_book(title=google_result[i].get('title'), author=google_result[i].get('author'),
                         description=google_result[i].get('description'),
                         isbn=google_result[i].get('isbn'), picture=google_result[i].get('picture'))
 
@@ -71,10 +71,24 @@ def get_books(field_name_: str, field_data_: str) -> dict:
     return books_to_return
 
 
-def insert_book(name: str, author: str, description: str, isbn: str, picture: str) -> [dict]:
+def get_book_by_id(_id: str):
+    """
+    This function get a book by its id
+    :return: dict of information
+    """
+    sql = "SELECT {filter} FROM {db_name}.{table_name} " \
+          "WHERE {field_name}=%s".format(filter='*',
+                                         db_name=consts.DATABASE_NAME,
+                                         table_name=consts.TABLE_NAME,
+                                         field_name=consts.BOOK_ID)
+    book_info = execute_query(sql=sql, argument=_id)
+    return book_info
+
+
+def insert_book(title: str, author: str, description: str, isbn: str, picture: str) -> [dict]:
     """
     This function inserts book properties into the DB
-    :param name: the name of the book
+    :param title: the name of the book
     :param author: the name of the author
     :param description: the description of the book
     :param isbn: the isbn of the book
@@ -82,9 +96,9 @@ def insert_book(name: str, author: str, description: str, isbn: str, picture: st
     :return: a list of books
     """
 
-    sql = "INSERT INTO `books_db`.books (name, author, description, isbn, picture, likes_count) VALUES (%s,%s,%s,%s,%s,%s)"
+    sql = "INSERT INTO `books_db`.books (title, author, description, isbn, picture, likes_count) VALUES (%s,%s,%s,%s,%s,%s)"
 
-    final_result = execute_query(sql=sql, argument=(name, author, description, isbn, picture, 0))
+    final_result = execute_query(sql=sql, argument=(title, author, description, isbn, picture, 0))
     return final_result
 
 
