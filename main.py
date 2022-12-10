@@ -12,7 +12,7 @@ app = FastAPI(openapi_url='/openapi.json')
 app.include_router(books_search_router)
 
 
-@app.get("/api/health")
+@app.get("/health")
 def get_health():
     """
     The health check verify the app is up and that it is connected to the RDS instance
