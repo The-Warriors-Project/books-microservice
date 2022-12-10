@@ -26,7 +26,7 @@ class LikesCount(BaseModel):
                          operation_id="get_book")
 def get_book_by_name(book_name: str):
     """
-    This endpoint returns a book by its name. TEST EB auto deployment
+    This endpoint returns a book by its name
     """
     result = db_books_util.get_books(field_data_=book_name, field_name_=consts.TITLE)
 
