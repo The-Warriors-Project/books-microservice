@@ -77,7 +77,7 @@ def insert_book(book: Books):
 @books_search_router.put(path="/likes_count",
                          status_code=status.HTTP_200_OK,
                          operation_id="update_likes_count")
-def update_likes_count(likes_count: LikesCount) -> dict | Response:
+def update_likes_count(likes_count: LikesCount):
     """
     This endpoint update the like count for each book.
     """
@@ -104,7 +104,7 @@ def update_likes_count(likes_count: LikesCount) -> dict | Response:
 @books_search_router.get(path="/likes_count/book_id/{book_id}",
                          status_code=status.HTTP_200_OK,
                          operation_id="get_likes_count")
-def get_likes_count(book_id: str) -> dict | Response:
+def get_likes_count(book_id: str):
     """
     This endpoint returns the likes count for a book.
     """
