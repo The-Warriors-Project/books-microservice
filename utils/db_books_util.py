@@ -47,7 +47,7 @@ def get_books(field_name_: str, field_data_: str) -> dict:
 
     books_to_return = {}
     google_result = get_books_from_google_by_title(data=field_data_, field=field_name_)
-    for i in range(5):
+    for i in range(6):
         final_result = execute_query(sql=sql, argument=(google_result[i].get('title'), google_result[i].get('isbn')))
         if not final_result:
 
