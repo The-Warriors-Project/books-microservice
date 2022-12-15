@@ -15,7 +15,7 @@ def get_books_from_google_by_title(data: str, field: str) -> dict:
         response = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=inauthor+{data}")
 
     books = {}
-    for i in range(5):  # takes the first five books in the Google api response
+    for i in range(6):  # takes the first five books in the Google api response
         format_response = response.json().get('items')[i].get('volumeInfo')  # get the first item from the list
         title, author, description, isbn, picture = extract_data_from_google_dict(response=format_response)
         books[i] = {'title': title, 'author': author, 'description': description,
