@@ -83,7 +83,7 @@ def update_likes_count(likes_count: LikesCount):
     """
 
     payload = {}
-    book_list = likes_count.book_ids.split(' ')  # split the list
+    book_list = likes_count.book_ids.split('')  # split the list
     keep_track = []
     try:
         for _id in book_list:
